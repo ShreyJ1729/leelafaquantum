@@ -31,36 +31,30 @@ const Home = () => {
           const decoder = new TextDecoder();
           let partialResponse = "";
 
-          const read = (): Promise<void> => {
-            return reader.read().then(({ done, value }) => {
-              if (done) {
-                return;
-              }
+          const read = async (): Promise<void> => {
+            const { done, value } = await reader.read();
+            if (done) {
+              return;
+            }
+            // Decode the new chunk of the response
+            const chunk = decoder.decode(value, { stream: true });
+            // Append the new chunk to the partial response
+            partialResponse += chunk;
+            // Check if the partial response contains the end string
+            const endStringIndex = partialResponse.indexOf("<END>");
+            if (endStringIndex !== -1) {
+              // Save the urls
+              const new_urls = partialResponse.slice(endStringIndex + 5);
+              setUrls(new_urls.split("\n"));
+              console.log(new_urls);
 
-              // Decode the new chunk of the response
-              const chunk = decoder.decode(value, { stream: true });
-
-              // Append the new chunk to the partial response
-              partialResponse += chunk;
-
-              // Check if the partial response contains the end string
-              const endStringIndex = partialResponse.indexOf("<END>");
-              if (endStringIndex !== -1) {
-                // Save the urls
-                const new_urls = partialResponse.slice(endStringIndex + 5);
-                setUrls(new_urls.split("\n"));
-                console.log(new_urls);
-
-                // Update the response with the partial response
-                setResponse(partialResponse.slice(0, endStringIndex));
-              } else {
-                // Update the response with the partial response
-                setResponse(partialResponse);
-              }
-
-              // Continue reading
-              return read();
-            });
+              // Update the response with the partial response
+              setResponse(partialResponse.slice(0, endStringIndex));
+            } else {
+              // Update the response with the partial response
+              setResponse(partialResponse);
+            }
+            return read();
           };
 
           // Start reading the response
