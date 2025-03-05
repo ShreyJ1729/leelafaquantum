@@ -97,7 +97,7 @@ const Home = () => {
       {/* Navigation */}
       <nav className="flex justify-between items-center mb-32">
         <h1 className="text-2xl font-bold">Leela FAQuantum</h1>
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <a
             href="#"
             className="bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-indigo-700"
@@ -107,7 +107,7 @@ const Home = () => {
           <button className="bg-gray-100 text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-200">
             Login
           </button>
-        </div>
+        </div> */}
       </nav>
 
       {/* Main Content */}
