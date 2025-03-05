@@ -1,13 +1,12 @@
 "use client";
-
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 
-const Home = () => {
+export const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState("");
-  const [urls, setUrls] = useState<string[]>([]);
+  const [urls, setUrls] = useState([]);
   const [nResults, setNResults] = useState(5);
 
   const base_url = "https://shreyj1729--leela-faquantum-rag.modal.run/";
@@ -21,7 +20,6 @@ const Home = () => {
       // call url with ?question=searchQuery and n_results=10.
       // as the response is streaming in, continuosuly update the response variable.
       // Once the chunk coming in has the string "<END>", then save everything after that to the variable "urls"
-
       fetch(`${base_url}?question=${searchQuery}&n_results=${nResults}`)
         .then((response) => {
           const reader = response.body?.getReader();
@@ -31,7 +29,7 @@ const Home = () => {
           const decoder = new TextDecoder();
           let partialResponse = "";
 
-          const read = (): Promise<void> => {
+          const read = () => {
             return reader.read().then(({ done, value }) => {
               if (done) {
                 return;
@@ -76,11 +74,7 @@ const Home = () => {
     }
   };
 
-  interface ResultItemProps {
-    url: string;
-  }
-
-  const ResultItem: React.FC<ResultItemProps> = ({ url }) => (
+  const ResultItem = (url) => (
     <div className="flex gap-4 mb-6" key={url}>
       <iframe
         width="560"
@@ -182,14 +176,11 @@ const Home = () => {
             {/* Result Items */}
             <div className="space-y-6">
               {/* map urls */}
-              {urls.map((url) => (
-                <ResultItem
-                  key={url}
-                  url={url
-                    .replace("watch?v=", "embed/")
-                    .replace("&t=", "?start=")}
-                />
-              ))}
+              {urls.map((url) =>
+                ResultItem(
+                  url.replace("watch?v=", "embed/").replace("&t=", "?start=")
+                )
+              )}
             </div>
           </div>
         )}
@@ -197,5 +188,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;
